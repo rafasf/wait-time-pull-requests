@@ -23,5 +23,5 @@
                    (concat prs (str-to-pull-requests body))
                    (recur next-page-url (concat prs (str-to-pull-requests body))))))))
 
-(defn pull-requests []
-  (all-prs "https://gh.com/pulls"))
+(defn pull-requests [owner repository]
+  (all-prs (str "https://api.github.com/" owner "/" repository "/pulls")))
