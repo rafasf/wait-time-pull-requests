@@ -18,13 +18,3 @@
     (let [prs (fetch-all "https://api.github.com/the-owner/a-repo/pulls" {"state" "something"})]
       (is (= [{:number 1} {:number 2} {:number 3}]
              prs)))))
-
-(deftest fetch-for-given-repository
-  (with-fake-http [{:url "https://api.github.com/repos/the-owner/a-repo/pulls"
-                    :query-params {"state" "closed"}
-                    :method :get}
-                   {:status 200
-                    :body "[{\"number\": 123}]"}]
-    (let [prs (closed-pull-requests-for "the-owner" "a-repo")]
-      (is (= [{:number 123}]
-             prs)))))

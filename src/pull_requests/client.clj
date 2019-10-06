@@ -16,7 +16,3 @@
                               (if-not next-page-url
                                 (concat prs (parse-to-map body))
                                 (recur next-page-url {} (concat prs (parse-to-map body))))))))
-
-(defn closed-pull-requests-for [owner repository]
-  (fetch-all (str "https://api.github.com/repos/" owner "/" repository "/pulls")
-             {"state" "closed"}))
