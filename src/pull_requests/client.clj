@@ -3,25 +3,20 @@
             [cheshire.core :refer [parse-string]]
             [pull-requests.links :refer [parse-links]]))
 
-(defn str-to-pull-requests [text]
+(defn parse-to-map [text]
   (parse-string text true))
-
-(defn to-pull-requests [{:keys [status headers body error opts]}]
-  (str-to-pull-requests body))
-
-(defn good-fields [pull-request]
-  (select-keys pull-request [:created_at :closed_at :number :state]))
 
 (defn next-page-in [headers]
   (-> headers parse-links (get-in [:links :next]) :href))
 
-(defn all-prs
-  ([url] (all-prs url []))
-  ([url prs] (let [{:keys [headers body]} @(client/get url)]
-               (let [next-page-url (next-page-in headers)]
-                 (if-not next-page-url
-                   (concat prs (str-to-pull-requests body))
-                   (recur next-page-url (concat prs (str-to-pull-requests body))))))))
+(defn fetch-all
+  ([url query-params] (fetch-all url query-params []))
+  ([url query-params prs] (let [{:keys [headers body]} @(client/get url {:query-params query-params})]
+                            (let [next-page-url (next-page-in headers)]
+                              (if-not next-page-url
+                                (concat prs (parse-to-map body))
+                                (recur next-page-url {} (concat prs (parse-to-map body))))))))
 
-(defn pull-requests [owner repository]
-  (all-prs (str "https://api.github.com/" owner "/" repository "/pulls")))
+(defn closed-pull-requests-for [owner repository]
+  (fetch-all (str "https://api.github.com/repos/" owner "/" repository "/pulls")
+             {"state" "closed"}))
