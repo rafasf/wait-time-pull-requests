@@ -27,3 +27,10 @@
            :created_at (local-date-time 2011 04 10 20 9 31)
            :closed_at (local-date-time 2011 04 10 20 9 31)}]
          (gh-select-fields github-pull-requests))))
+
+(deftest returns-review-time
+  (let [pr-with-review-time (review-time-of {:closed_at (local-date-time 2011 04 10 20 9 31)
+                                             :created_at (local-date-time 2011 04 10 19 8 31)})
+        review-time (select-keys pr-with-review-time [:review-time])]
+    (is (= {:review-time 61}
+           review-time))))

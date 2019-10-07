@@ -1,6 +1,6 @@
 (ns pull-requests.wait
   (:require [clojure.set :refer [rename-keys]]
-            [java-time :refer [local-date-time]]
+            [java-time :refer [local-date-time time-between]]
             [pull-requests.client :refer [fetch-all]]))
 
 (defn closed-pull-requests-for [owner repository]
@@ -26,3 +26,6 @@
 
 (defn gh-select-fields [prs]
   (map (comp parse-dates id-to-string adjust-key-names gh-pr-fields) prs))
+
+(defn review-time-of [pr]
+  (assoc {} :review-time (time-between (pr :created_at) (pr :closed_at) :minutes)))
