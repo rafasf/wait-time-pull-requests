@@ -9,6 +9,7 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [http-kit "2.4.0-alpha4"]
                  [cheshire "5.9.0"]
+                 [clojure.java-time "0.3.2"]
                  [cljfmt "0.6.4"]]
 
   :main ^:skip-aot pull-requests.core
