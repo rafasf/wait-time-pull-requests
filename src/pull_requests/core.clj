@@ -7,4 +7,10 @@
 
 (defn -main
   [& args]
-  (print-table (wait-times-in "dylanaraps" "pure-bash-bible")))
+  (let [wait-times (wait-times-in "dylanaraps" "pure-bash-bible")]
+    (println "")
+    (println "Summary")
+    (print-table [(wait-times :summary)])
+    (println "")
+    (println "Source with review time")
+    (print-table (wait-times :source))))
