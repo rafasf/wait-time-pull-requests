@@ -19,13 +19,17 @@
 (defn parse-date-in [date-key pull-request]
   (update pull-request date-key (partial local-date-time "yyyy-MM-dd'T'HH:mm:ss'Z'")))
 
-(defn parse-dates [pr]
-  ((comp
-    (partial parse-date-in :created_at)
-    (partial parse-date-in :closed_at)) pr))
+(def parse-dates
+  (comp
+   (partial parse-date-in :created_at)
+   (partial parse-date-in :closed_at)))
 
-(defn gh-select-fields [prs]
-  (map (comp parse-dates id-to-string adjust-key-names gh-pr-fields) prs))
+(def to-pull-request
+  (comp parse-dates id-to-string adjust-key-names gh-pr-fields))
 
 (defn review-time-of [pr]
-  (assoc {} :review-time (time-between (pr :created_at) (pr :closed_at) :minutes)))
+  (assoc pr :review-time (time-between (pr :created_at) (pr :closed_at) :minutes)))
+
+(defn wait-times-in [owner repository]
+  (->> (closed-pull-requests-for owner repository)
+       (map to-pull-request)))
