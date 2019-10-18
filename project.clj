@@ -10,7 +10,7 @@
                  [http-kit "2.4.0-alpha4"]
                  [cheshire "5.9.0"]
                  [clojure.java-time "0.3.2"]
-                 [cljfmt "0.6.4"]]
+                 [org.clojure/tools.cli "0.4.2"]]
 
   :main ^:skip-aot pull-requests.core
   :target-path "target/%s"
@@ -18,7 +18,10 @@
   :profiles
   {
    :uberjar {:aot :all}
-   :dev {:plugins [[com.jakemccrary/lein-test-refresh "0.24.1"]]}
+
+   :dev {:plugins [[com.jakemccrary/lein-test-refresh "0.24.1"]
+                   [cljfmt "0.6.4"]]}
+
    :test {:plugins [[lein-test-report-junit-xml "0.2.0"]]
           :dependencies [[pjstadig/humane-test-output "0.9.0"]
                          [http-kit.fake "0.2.1"]]
