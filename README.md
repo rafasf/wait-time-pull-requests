@@ -20,9 +20,9 @@ this very developer-centric and manual tool, you can get those numbers. :smile:
 
 > It only works with public repositories for now.
 
-1. Open `core.clj`
-2. Update the values for `owner` and `repository`
-3. `$ lein run`
+```sh
+$ lein run -- -o[REPO OWNER] -r [REPO NAME]
+```
 
 ## TODO
 
