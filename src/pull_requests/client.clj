@@ -10,9 +10,9 @@
   (-> headers parse-links (get-in [:links :next]) :href))
 
 (defn fetch-all
-  ([url query-params] (fetch-all url query-params []))
-  ([url query-params prs] (let [{:keys [headers body]} @(client/get url {:query-params query-params})]
+  ([provider query-params] (fetch-all provider query-params []))
+  ([provider query-params prs] (let [{:keys [headers body]} @(client/get (provider :url) {:query-params query-params})]
                             (let [next-page-url (next-page-in headers)]
                               (if-not next-page-url
                                 (concat prs (parse-to-map body))
-                                (recur next-page-url {} (concat prs (parse-to-map body))))))))
+                                (recur (assoc provider :url next-page-url) {} (concat prs (parse-to-map body))))))))

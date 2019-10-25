@@ -4,7 +4,7 @@
             [pull-requests.client :refer [fetch-all]]))
 
 (defn closed-pull-requests-for [owner repository]
-  (fetch-all (str "https://api.github.com/repos/" owner "/" repository "/pulls")
+  (fetch-all {:url (str "https://api.github.com/repos/" owner "/" repository "/pulls")}
              {"state" "closed"}))
 
 (defn gh-pr-fields [pr]
