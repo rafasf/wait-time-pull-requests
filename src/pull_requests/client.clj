@@ -15,8 +15,11 @@
 
 (defn fetch-all
   ([provider query-params] (fetch-all provider query-params []))
-  ([provider query-params prs] (let [{:keys [headers body]} @(client/get (provider :url) {:query-params query-params})]
-                                 (let [next-page-url (next-page-in headers)]
-                                   (if-not next-page-url
-                                     (concat prs (parse-to-map body))
-                                     (recur (assoc provider :url next-page-url) {} (concat prs (parse-to-map body))))))))
+  ([provider query-params prs]
+   (let [{:keys [headers body]} @(client/get
+                                  (provider :url)
+                                  (merge {:query-params query-params} (select-keys provider [:basic-auth])))]
+     (let [next-page-url (next-page-in headers)]
+       (if-not next-page-url
+         (concat prs (parse-to-map body))
+         (recur (assoc provider :url next-page-url) {} (concat prs (parse-to-map body))))))))
