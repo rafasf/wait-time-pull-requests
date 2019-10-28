@@ -17,8 +17,8 @@
      :wait-time-minutes wait-time
      :wait-time-days (as (minutes wait-time) :days)}))
 
-(defn wait-times-in [owner repository]
-  (let [pull-requests (->> (fetch-pull-requests owner repository)
+(defn wait-times-in [provider owner repository]
+  (let [pull-requests (->> (fetch-pull-requests provider owner repository)
                            (map review-time-of))
         summary (wait-time-for pull-requests)]
     {:source pull-requests

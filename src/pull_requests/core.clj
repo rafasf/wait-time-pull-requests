@@ -4,12 +4,15 @@
             [org.httpkit.client :as client]
             [cheshire.core :refer [parse-string]]
             [clojure.tools.cli :refer [parse-opts summarize]]
+            [pull-requests.github-client :refer [github-provider]]
             [pull-requests.wait :refer [wait-times-in]]))
 
 (def required-opts #{:owner :repository})
 (def cli-options
   [["-o" "--owner OWNER" "Repository Owner"]
-   ["-r" "--repository REPO" "Repository Name"]])
+   ["-r" "--repository REPO" "Repository Name"]
+   ["-u" "--user USER" "Username"]
+   ["-s" "--secret SECRET" "User's Token or Password"]])
 
 (defn missing-opts? [opts]
   (cond
@@ -19,8 +22,10 @@
   (str "The following errors occurred while parsing your command:\n\n"
        (clojure.string/join \newline errors)))
 
-(defn check-wait-time [{:keys [owner repository]}]
-  (let [wait-times (wait-times-in owner repository)]
+(defn check-wait-time [options]
+  (let [{:keys [owner repository]} options
+        auth (select-keys options [:user :secret])
+        wait-times (wait-times-in (github-provider auth) owner repository)]
     (println "")
     (println "Summary")
     (print-table [(wait-times :summary)])

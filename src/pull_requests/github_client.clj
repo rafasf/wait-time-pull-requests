@@ -1,10 +1,10 @@
 (ns pull-requests.github-client
   (:require [clojure.set :refer [rename-keys]]
             [java-time :refer [local-date-time time-between]]
-            [pull-requests.client :refer [fetch-all]]))
+            [pull-requests.client :refer [fetch-all provider-for]]))
 
-(defn closed-pull-requests-for [owner repository]
-  (fetch-all {:url (str "https://api.github.com/repos/" owner "/" repository "/pulls")}
+(defn closed-pull-requests-for [provider owner repository]
+  (fetch-all (assoc provider :url (str (provider :url) "/repos/" owner "/" repository "/pulls"))
              {"state" "closed"}))
 
 (defn gh-pr-fields [pr]
@@ -27,6 +27,12 @@
 (def to-pull-request
   (comp parse-dates id-to-string adjust-key-names gh-pr-fields))
 
-(defn fetch-pull-requests [owner repository]
-  (->> (closed-pull-requests-for owner repository)
+(defn github-provider [auth]
+  (let [base-url "https://api.github.com"]
+    (if (empty? auth)
+      (provider-for base-url)
+      (provider-for base-url (auth :user) (auth :secret)))))
+
+(defn fetch-pull-requests [provider owner repository]
+  (->> (closed-pull-requests-for provider owner repository)
        (map to-pull-request)))
