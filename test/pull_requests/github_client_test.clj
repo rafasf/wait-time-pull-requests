@@ -20,7 +20,7 @@
                     :method :get}
                    {:status 200
                     :body "[{\"number\": 123}]"}]
-    (let [prs (closed-pull-requests-for "the-owner" "a-repo")]
+    (let [prs (closed-pull-requests-for (github-provider {}) "the-owner" "a-repo")]
       (is (= [{:number 123}]
              prs)))))
 
